@@ -1,6 +1,4 @@
-"use client";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Plus,
   Filter,
@@ -22,68 +20,31 @@ import {
 import Button from "../../components/ui/Button";
 import Badge from "../../components/ui/Badge";
 import ResponsiveTable from "../../components/ui/ResponsiveTable";
+import AddUserModal from "./AddUserModal";
+import { deleteUser, getUsers } from "../../services/userService";
+import { toast } from "react-toastify";
+import DeleteUserModal from "./DeleteUserModal";
 
 const Users = () => {
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] = useState(false);
 
-  // Mock users data
-  const users = [
-    {
-      id: 1,
-      name: "Alex Johnson",
-      email: "alex.johnson@example.com",
-      phone: "+1 (555) 123-4567",
-      role: "Admin",
-      status: "Active",
-      projects: ["Parkview Residences", "Riverside Apartments"],
-      assignedLeads: 24,
-      lastActive: "2023-05-18T10:30:00",
-    },
-    {
-      id: 2,
-      name: "Michael Chen",
-      email: "michael.chen@example.com",
-      phone: "+1 (555) 987-6543",
-      role: "Sales Executive",
-      status: "Active",
-      projects: ["Riverside Apartments", "Skyline Towers"],
-      assignedLeads: 18,
-      lastActive: "2023-05-18T09:15:00",
-    },
-    {
-      id: 3,
-      name: "Jessica Lee",
-      email: "jessica.lee@example.com",
-      phone: "+1 (555) 456-7890",
-      role: "Sales Executive",
-      status: "Active",
-      projects: ["Parkview Residences", "Skyline Towers"],
-      assignedLeads: 15,
-      lastActive: "2023-05-17T16:45:00",
-    },
-    {
-      id: 4,
-      name: "David Martinez",
-      email: "david.martinez@example.com",
-      phone: "+1 (555) 234-5678",
-      role: "Manager",
-      status: "Active",
-      projects: ["All Projects"],
-      assignedLeads: 8,
-      lastActive: "2023-05-18T11:20:00",
-    },
-    {
-      id: 5,
-      name: "Sarah Wilson",
-      email: "sarah.wilson@example.com",
-      phone: "+1 (555) 876-5432",
-      role: "Sales Executive",
-      status: "Inactive",
-      projects: ["Parkview Residences"],
-      assignedLeads: 0,
-      lastActive: "2023-04-30T15:10:00",
-    },
-  ];
+  useEffect(() => {
+    getUsers({
+      search: searchTerm,
+    }).then((res) => {
+      setUsers(res.data);
+    });
+  }, [searchTerm]);
+
+  const refreshUser = () => {
+    getUsers().then((res) => {
+      setUsers(res.data);
+    });
+  };
 
   const getStatusBadge = (status) => {
     const variants = {
@@ -104,6 +65,34 @@ const Users = () => {
 
     return <Badge variant={variants[role] || "default"}>{role}</Badge>;
   };
+  const handleExport = () => {
+    const csvContent = [
+      ["Name", "Email", "Phone", "Role", "Status"].join(","),
+      ...users.map((user) =>
+        [user.name, user.email, user.phone, user.role, user.status].join(",")
+      ),
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "users.csv";
+    link.click();
+  };
+
+  const handleDeleteUser = () => {
+    // Call the delete user API here
+    // Assuming deleteUser is a function that takes userId and deletes the user
+    deleteUser(selectedUser.id).then((res) => {
+      if (res.success) {
+        toast.success(res.message);
+      } else {
+        toast.error(res.message);
+      }
+      setIsDeleteUserModalOpen(false);
+      refreshUser();
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -123,6 +112,8 @@ const Users = () => {
             <div className="relative">
               <input
                 type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search users..."
                 className="w-full sm:w-64 pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
@@ -134,10 +125,20 @@ const Users = () => {
             <Button variant="outline" icon={Filter} size="md">
               Filter
             </Button>
-            <Button variant="outline" icon={Download} size="md">
+            <Button
+              variant="outline"
+              icon={Download}
+              size="md"
+              onClick={handleExport}
+            >
               Export
             </Button>
-            <Button variant="outline" icon={RefreshCw} size="md">
+            <Button
+              variant="outline"
+              onClick={refreshUser}
+              icon={RefreshCw}
+              size="md"
+            >
               Refresh
             </Button>
           </div>
@@ -155,7 +156,7 @@ const Users = () => {
               { header: "Actions" },
             ]}
             data={users}
-            renderRow={(user, index) => (
+            renderRow={(user) => (
               <tr key={user.id} className="hover:bg-gray-50">
                 <td className="px-4 py-4 whitespace-normal">
                   <div className="flex items-center">
@@ -202,16 +203,31 @@ const Users = () => {
                 <td className="px-4 py-4 whitespace-normal text-sm text-gray-500">
                   {new Date(user.lastActive).toLocaleString()}
                 </td>
-                <td className="px-4 py-4 whitespace-normal text-right text-sm font-medium">
-                  <div className="relative inline-block text-left">
-                    <button className="p-1 rounded-full hover:bg-gray-100">
-                      <MoreHorizontal size={16} className="text-gray-500" />
-                    </button>
-                  </div>
+                <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setIsAddUserModalOpen(true);
+                    }}
+                  >
+                    ✏️
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setIsDeleteUserModalOpen(true);
+                    }}
+                  >
+                    🗑️
+                  </Button>
                 </td>
               </tr>
             )}
-            renderMobileCard={(user, index) => (
+            renderMobileCard={(user) => (
               <div
                 key={user.id}
                 className="bg-white rounded-lg shadow-sm border border-gray-200 p-4"
@@ -263,10 +279,27 @@ const Users = () => {
                   </div>
                 </div>
 
-                <div className="flex justify-end">
-                  <button className="p-1 rounded-full hover:bg-gray-100">
-                    <MoreHorizontal size={16} className="text-gray-500" />
-                  </button>
+                <div className="flex justify-end space-x-2 mt-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setIsAddUserModalOpen(true);
+                    }}
+                  >
+                    ✏️
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setIsDeleteUserModalOpen(true);
+                    }}
+                  >
+                    🗑️
+                  </Button>
                 </div>
               </div>
             )}
@@ -431,6 +464,23 @@ const Users = () => {
       </div>
 
       {/* Add User Modal would go here */}
+      {isAddUserModalOpen && (
+        <AddUserModal
+          isOpen={isAddUserModalOpen}
+          onClose={() => {
+            setIsAddUserModalOpen(false);
+            setSelectedUser(null);
+          }}
+          user={selectedUser}
+          refresh={refreshUser}
+        />
+      )}
+      {isDeleteUserModalOpen && (
+        <DeleteUserModal
+          onClose={() => setIsDeleteUserModalOpen(false)}
+          confirmDelete={handleDeleteUser}
+        />
+      )}
     </div>
   );
 };

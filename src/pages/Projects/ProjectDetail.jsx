@@ -1,6 +1,4 @@
-"use client";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   ArrowLeft,
@@ -25,153 +23,32 @@ import {
 } from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import Badge from "../../components/ui/Badge";
+import { deleteProject, findProjectById } from "../../services/projectService";
+import EditProjectModal from "./EditProjectModal";
+import DeleteProjectModal from "./DeleteProjectModal";
+import { de } from "date-fns/locale";
+import { toast } from "react-toastify";
 
 const ProjectDetail = () => {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState("overview");
-
+  const [project, setProject] = useState({});
+  const [units, setUnits] = useState([]);
+  const [documents, setDocuments] = useState([]);
+  const [isEditProjectModalOpen, setIsEditProjectModalOpen] = useState(false);
+  const [isDeleteProjectModalOpen, setIsDeleteProjectModalOpen] =
+    useState(false);
+  useEffect(() => {
+    const response = findProjectById(id);
+    if (response) {
+      setProject(response);
+      setUnits(response.units || []);
+      setDocuments(response.documents || []);
+    } else {
+      console.error("Project not found");
+    }
+  }, [id]);
   // Mock project data - in a real app, would come from Redux store
-  const project = {
-    id: Number.parseInt(id),
-    name: "Parkview Residences",
-    description:
-      "Luxury residential apartments in Downtown with stunning park views. Features include premium finishes, rooftop garden, fitness center, and 24/7 security.",
-    location: "Downtown, Metro City",
-    type: "Residential",
-    units: 120,
-    available: 45,
-    booked: 35,
-    sold: 40,
-    reraId: "RERA12345",
-    completionDate: "2024-06-30",
-    launchDate: "2022-04-15",
-    status: "Active",
-    amenities: [
-      "Swimming Pool",
-      "Fitness Center",
-      "Clubhouse",
-      "Rooftop Garden",
-      "Children's Play Area",
-      "24/7 Security",
-      "Covered Parking",
-      "Visitor Parking",
-    ],
-    floorPlans: [
-      {
-        type: "1 BHK",
-        size: "650-750 sq ft",
-        startingPrice: "$250,000",
-        available: 15,
-      },
-      {
-        type: "2 BHK",
-        size: "950-1100 sq ft",
-        startingPrice: "$380,000",
-        available: 20,
-      },
-      {
-        type: "3 BHK",
-        size: "1350-1500 sq ft",
-        startingPrice: "$520,000",
-        available: 10,
-      },
-    ],
-  };
-
-  // Mock units data
-  const units = [
-    {
-      id: 1,
-      unitNo: "A-101",
-      type: "1 BHK",
-      floor: 1,
-      block: "A",
-      size: "680 sq ft",
-      price: "$255,000",
-      status: "Available",
-      facing: "Park",
-    },
-    {
-      id: 2,
-      unitNo: "A-102",
-      type: "2 BHK",
-      floor: 1,
-      block: "A",
-      size: "980 sq ft",
-      price: "$385,000",
-      status: "Booked",
-      facing: "Street",
-    },
-    {
-      id: 3,
-      unitNo: "A-201",
-      type: "2 BHK",
-      floor: 2,
-      block: "A",
-      size: "1000 sq ft",
-      price: "$390,000",
-      status: "Available",
-      facing: "Park",
-    },
-    {
-      id: 4,
-      unitNo: "A-202",
-      type: "3 BHK",
-      floor: 2,
-      block: "A",
-      size: "1400 sq ft",
-      price: "$530,000",
-      status: "Sold",
-      facing: "Street",
-    },
-    {
-      id: 5,
-      unitNo: "B-101",
-      type: "1 BHK",
-      floor: 1,
-      block: "B",
-      size: "700 sq ft",
-      price: "$260,000",
-      status: "Available",
-      facing: "Garden",
-    },
-  ];
-
-  // Mock documents data
-  const documents = [
-    {
-      id: 1,
-      name: "Floor Plan.pdf",
-      type: "Floor Plan",
-      size: "2.4 MB",
-      uploadedOn: "2022-04-20",
-      uploadedBy: "Admin",
-    },
-    {
-      id: 2,
-      name: "RERA Certificate.pdf",
-      type: "Legal",
-      size: "1.1 MB",
-      uploadedOn: "2022-04-15",
-      uploadedBy: "Admin",
-    },
-    {
-      id: 3,
-      name: "Site Photos.zip",
-      type: "Photos",
-      size: "15.8 MB",
-      uploadedOn: "2022-05-10",
-      uploadedBy: "Alex Johnson",
-    },
-    {
-      id: 4,
-      name: "Brochure.pdf",
-      type: "Marketing",
-      size: "4.2 MB",
-      uploadedOn: "2022-05-15",
-      uploadedBy: "Marketing Team",
-    },
-  ];
 
   const getStatusBadge = (status) => {
     const variants = {
@@ -187,6 +64,13 @@ const ProjectDetail = () => {
     return <Badge variant={variants[status] || "default"}>{status}</Badge>;
   };
 
+  const handleDeleteProject = () => {
+    deleteProject(id).then(() => {
+      window.location.href = "/projects";
+      toast.success("Project deleted successfully");
+    });
+    setIsDeleteProjectModalOpen(false);
+  };
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -200,10 +84,19 @@ const ProjectDetail = () => {
           {getStatusBadge(project.status)}
         </div>
         <div className="flex space-x-3">
-          <Button variant="outline" size="sm" icon={Trash}>
+          <Button
+            onClick={() => setIsDeleteProjectModalOpen(true)}
+            variant="outline"
+            size="sm"
+            icon={Trash}
+          >
             Delete
           </Button>
-          <Button size="sm" icon={Edit}>
+          <Button
+            size="sm"
+            onClick={() => setIsEditProjectModalOpen(true)}
+            icon={Edit}
+          >
             Edit Project
           </Button>
         </div>
@@ -214,7 +107,7 @@ const ProjectDetail = () => {
           <Card>
             <div className="h-64 bg-gray-200 relative">
               <img
-                src={`/placeholder.svg?height=256&width=800&text=${project.name}`}
+                src={project.image}
                 alt={project.name}
                 className="w-full h-full object-cover"
               />
@@ -366,17 +259,18 @@ const ProjectDetail = () => {
                       Amenities
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                      {project.amenities.map((amenity, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center bg-gray-50 rounded-md p-2"
-                        >
-                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-                          <span className="text-sm text-gray-700">
-                            {amenity}
-                          </span>
-                        </div>
-                      ))}
+                      {project?.amenities &&
+                        project?.amenities.map((amenity, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center bg-gray-50 rounded-md p-2"
+                          >
+                            <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                            <span className="text-sm text-gray-700">
+                              {amenity}
+                            </span>
+                          </div>
+                        ))}
                     </div>
                   </div>
 
@@ -385,44 +279,45 @@ const ProjectDetail = () => {
                       Floor Plans
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                      {project.floorPlans.map((plan, index) => (
-                        <Card key={index} className="border border-gray-200">
-                          <CardContent className="p-4">
-                            <h4 className="font-medium text-gray-900">
-                              {plan.type}
-                            </h4>
-                            <div className="mt-2 space-y-1 text-sm">
-                              <div className="flex justify-between">
-                                <span className="text-gray-500">Size:</span>
-                                <span className="text-gray-900">
-                                  {plan.size}
-                                </span>
+                      {project?.floorPlans &&
+                        project?.floorPlans.map((plan, index) => (
+                          <Card key={index} className="border border-gray-200">
+                            <CardContent className="p-4">
+                              <h4 className="font-medium text-gray-900">
+                                {plan.type}
+                              </h4>
+                              <div className="mt-2 space-y-1 text-sm">
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500">Size:</span>
+                                  <span className="text-gray-900">
+                                    {plan.size}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500">Price:</span>
+                                  <span className="text-gray-900">
+                                    {plan.startingPrice}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500">
+                                    Available:
+                                  </span>
+                                  <span className="text-gray-900">
+                                    {plan.available} units
+                                  </span>
+                                </div>
                               </div>
-                              <div className="flex justify-between">
-                                <span className="text-gray-500">Price:</span>
-                                <span className="text-gray-900">
-                                  {plan.startingPrice}
-                                </span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-gray-500">
-                                  Available:
-                                </span>
-                                <span className="text-gray-900">
-                                  {plan.available} units
-                                </span>
-                              </div>
-                            </div>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="w-full mt-3"
-                            >
-                              View Details
-                            </Button>
-                          </CardContent>
-                        </Card>
-                      ))}
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="w-full mt-3"
+                              >
+                                View Details
+                              </Button>
+                            </CardContent>
+                          </Card>
+                        ))}
                     </div>
                   </div>
                 </div>
@@ -769,7 +664,7 @@ const ProjectDetail = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center p-3 bg-blue-50 rounded-md">
                   <div className="text-xl font-semibold text-blue-700">
-                    {project.units}
+                    {project.unit}
                   </div>
                   <div className="text-xs text-gray-500">Total Units</div>
                 </div>
@@ -887,6 +782,18 @@ const ProjectDetail = () => {
               </div>
             </CardContent>
           </Card>
+          {isEditProjectModalOpen && (
+            <EditProjectModal
+              project={project}
+              onClose={() => setIsEditProjectModalOpen(false)}
+            />
+          )}
+          {isDeleteProjectModalOpen && (
+            <DeleteProjectModal
+              confirmDelete={handleDeleteProject}
+              onClose={() => setIsDeleteProjectModalOpen(false)}
+            />
+          )}
         </div>
       </div>
     </div>

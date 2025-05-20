@@ -3,60 +3,8 @@ import Badge from "../../components/ui/Badge";
 import { Link } from "react-router-dom";
 import ResponsiveTable from "../../components/ui/ResponsiveTable";
 
-const RecentLeadsTable = () => {
-  const leads = [
-    {
-      id: 1,
-      name: "John Smith",
-      email: "john.smith@example.com",
-      phone: "+1 (555) 123-4567",
-      source: "Website",
-      status: "New",
-      date: "2023-05-18",
-      project: "Parkview Residences",
-    },
-    {
-      id: 2,
-      name: "Sarah Johnson",
-      email: "sarah.j@example.com",
-      phone: "+1 (555) 987-6543",
-      source: "Facebook",
-      status: "Contacted",
-      date: "2023-05-17",
-      project: "Riverside Apartments",
-    },
-    {
-      id: 3,
-      name: "Michael Brown",
-      email: "michael.b@example.com",
-      phone: "+1 (555) 456-7890",
-      source: "Referral",
-      status: "Site Visit",
-      date: "2023-05-16",
-      project: "Parkview Residences",
-    },
-    {
-      id: 4,
-      name: "Emily Davis",
-      email: "emily.d@example.com",
-      phone: "+1 (555) 789-0123",
-      source: "Instagram",
-      status: "Negotiation",
-      date: "2023-05-15",
-      project: "Skyline Towers",
-    },
-    {
-      id: 5,
-      name: "Robert Wilson",
-      email: "robert.w@example.com",
-      phone: "+1 (555) 234-5678",
-      source: "Google",
-      status: "Won",
-      date: "2023-05-14",
-      project: "Riverside Apartments",
-    },
-  ];
-
+const RecentLeadsTable = ({ leads }) => {
+  
   const getStatusBadge = (status) => {
     const variants = {
       New: "primary",
@@ -69,7 +17,7 @@ const RecentLeadsTable = () => {
 
     return <Badge variant={variants[status]}>{status}</Badge>;
   };
-
+console.log("leads", leads);
   return (
     <ResponsiveTable
       columns={[

@@ -17,76 +17,39 @@ import {
 import Button from "../../components/ui/Button";
 import Badge from "../../components/ui/Badge";
 import { Link } from "react-router-dom";
+import { getProjects } from "../../services/projectService";
+import { useEffect, useState } from "react";
+import AddProjectModal from "./AddProjectModal";
 
 const Projects = () => {
-  const projects = [
-    {
-      id: 1,
-      name: "Parkview Residences",
-      location: "Downtown, Metro City",
-      type: "Residential",
-      units: 120,
-      available: 45,
-      booked: 35,
-      sold: 40,
-      reraId: "RERA12345",
-      completionDate: "2024-06-30",
-      status: "Active",
-    },
-    {
-      id: 2,
-      name: "Riverside Apartments",
-      location: "Riverside, Metro City",
-      type: "Residential",
-      units: 80,
-      available: 20,
-      booked: 25,
-      sold: 35,
-      reraId: "RERA67890",
-      completionDate: "2023-12-15",
-      status: "Active",
-    },
-    {
-      id: 3,
-      name: "Skyline Towers",
-      location: "Business District, Metro City",
-      type: "Commercial",
-      units: 50,
-      available: 15,
-      booked: 10,
-      sold: 25,
-      reraId: "RERA54321",
-      completionDate: "2024-03-20",
-      status: "Active",
-    },
-    {
-      id: 4,
-      name: "Green Valley Villas",
-      location: "Suburbs, Metro City",
-      type: "Residential",
-      units: 40,
-      available: 0,
-      booked: 0,
-      sold: 40,
-      reraId: "RERA09876",
-      completionDate: "2022-08-10",
-      status: "Completed",
-    },
-    {
-      id: 5,
-      name: "Metro Business Park",
-      location: "Industrial Zone, Metro City",
-      type: "Commercial",
-      units: 30,
-      available: 10,
-      booked: 5,
-      sold: 15,
-      reraId: "RERA13579",
-      completionDate: "2024-09-15",
-      status: "Active",
-    },
-  ];
+ const [projects, setProjects] = useState([]);
+ const[isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
+ const [searchTerm, setSearchTerm] = useState("");
+  const [filteredProjects, setFilteredProjects] = useState([]);
+  useEffect(() => {
+    // Fetch projects from API or perform any other side effects here
+    getProjects().then((response) => {
+      console.log("Fetched projects:", response);
+      setProjects(response.data);
+    
+    }
+    ).catch((error) => {
+      console.error("Error fetching projects:", error);
+    });
+  }, []);
 
+
+  useEffect(() => {
+    if (searchTerm) {
+      const filtered = projects.filter((project) =>
+        project.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredProjects(filtered);
+    } else {
+      setFilteredProjects(projects);
+    }
+    }, [searchTerm, projects]);
+  
   const getStatusBadge = (status) => {
     const variants = {
       Active: "success",
@@ -97,13 +60,64 @@ const Projects = () => {
 
     return <Badge variant={variants[status] || "default"}>{status}</Badge>;
   };
+  const exportToCSV = () => {
+    const headers = [
+      "Name",
+      "Location",
+      "Type",
+      "Available",
+      "Booked",
+      "Sold",
+      "Units",
+      "RERA",
+    ];
+    const rows = projects.map((p) => [
+      p.name,
+      p.location,
+      p.type,
+      p.available,
+      p.booked,
+      p.sold,
+      p.unit,
+      p.reraId,
+    ]);
+
+    const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "projects.csv";
+    a.click();
+  };
+
+  const refresh = () => {
+    getProjects().then((response) => {
+      console.log("Fetched projects:", response);
+      setProjects(response.data);
+    }).catch((error) => {
+      console.error("Error fetching projects:", error);
+    });
+  }
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  }
+  
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold text-gray-900">Project Management</h1>
         <div className="mt-3 sm:mt-0">
-          <Button icon={Plus}>Add New Project</Button>
+          <Button
+            onClick={() => {
+              setIsAddProjectModalOpen(true);
+            }}
+            icon={Plus}
+          >
+            Add New Project
+          </Button>
         </div>
       </div>
 
@@ -114,6 +128,8 @@ const Projects = () => {
             <div className="relative">
               <input
                 type="text"
+                value={searchTerm}
+                onChange={handleSearchChange}
                 placeholder="Search projects..."
                 className="w-full sm:w-64 pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
@@ -125,17 +141,27 @@ const Projects = () => {
             <Button variant="outline" icon={Filter} size="md">
               Filter
             </Button>
-            <Button variant="outline" icon={Download} size="md">
+            <Button
+              variant="outline"
+              icon={Download}
+              size="md"
+              onClick={exportToCSV}
+            >
               Export
             </Button>
-            <Button variant="outline" icon={RefreshCw} size="md">
+            <Button
+              onClick={refresh}
+              variant="outline"
+              icon={RefreshCw}
+              size="md"
+            >
               Refresh
             </Button>
           </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project) => (
+            {filteredProjects.map((project) => (
               <Link
                 key={project.id}
                 to={`/projects/${project.id}`}
@@ -145,7 +171,7 @@ const Projects = () => {
                   <CardContent className="p-0">
                     <div className="h-40 bg-gray-200 relative">
                       <img
-                        src={`/placeholder.svg?height=160&width=400&text=${project.name}`}
+                        src={project.image}
                         alt={project.name}
                         className="w-full h-full object-cover"
                       />
@@ -191,7 +217,7 @@ const Projects = () => {
                         </div>
                         <div className="flex items-center text-xs text-gray-500">
                           <Home size={14} className="mr-1 flex-shrink-0" />
-                          <span>{project.units} Units</span>
+                          <span>{project.unit} Units</span>
                         </div>
                       </div>
                     </div>
@@ -202,6 +228,13 @@ const Projects = () => {
           </div>
         </CardContent>
       </Card>
+      {isAddProjectModalOpen && (
+        <AddProjectModal
+          isOpen={isAddProjectModalOpen}
+          onClose={() => setIsAddProjectModalOpen(false)}
+          refresh={refresh}
+        />
+      )}
     </div>
   );
 };

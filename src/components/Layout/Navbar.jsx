@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useRef, useEffect } from "react";
 import { Bell, Search, Menu, User, ChevronDown } from "lucide-react";
 import NotificationsDropdown from "../ui/NotificationsDropdown";

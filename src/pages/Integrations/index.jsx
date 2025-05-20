@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { Link2, ExternalLink, Plus, RefreshCw } from "lucide-react";
 import {

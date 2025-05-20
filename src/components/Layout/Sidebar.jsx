@@ -1,5 +1,3 @@
-"use client";
-
 import { Link, useLocation } from "react-router-dom";
 import {
   Home,
@@ -13,6 +11,7 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  User,
 } from "lucide-react";
 
 const Sidebar = ({ isOpen, toggleSidebar, isMobile }) => {
@@ -22,11 +21,12 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobile }) => {
     { path: "/", icon: Home, label: "Dashboard" },
     { path: "/leads", icon: Users, label: "Leads" },
     { path: "/projects", icon: Building, label: "Projects" },
-    { path: "/calendar", icon: Calendar, label: "Calendar" },
-    { path: "/site-visits", icon: MapPin, label: "Site Visits" },
-    { path: "/documents", icon: FileText, label: "Documents" },
-    { path: "/integrations", icon: Link2, label: "Integrations" },
-    { path: "/settings", icon: Settings, label: "Settings" },
+    // { path: "/calendar", icon: Calendar, label: "Calendar" },
+    // { path: "/site-visits", icon: MapPin, label: "Site Visits" },
+    // { path: "/documents", icon: FileText, label: "Documents" },
+    // { path: "/integrations", icon: Link2, label: "Integrations" },
+    { path: "/users", icon: User, label: "Users" },
+    // { path: "/settings", icon: Settings, label: "Settings" },
   ];
 
   return (

@@ -6,30 +6,30 @@ const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Check if the screen is mobile size
+  // Check once on mount
   useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth < 768) {
-        setSidebarOpen(false);
-      } else {
-        setSidebarOpen(true);
-      }
+    const isNowMobile = window.innerWidth < 1024;
+    setIsMobile(isNowMobile);
+    setSidebarOpen(!isNowMobile);
+  }, []);
+
+  // Add resize listener separately
+  useEffect(() => {
+    const handleResize = () => {
+      const isNowMobile = window.innerWidth < 1024;
+      setIsMobile(isNowMobile);
+      setSidebarOpen(!isNowMobile);
     };
 
-    // Initial check
-    checkIfMobile();
-
-    // Add event listener
-    window.addEventListener("resize", checkIfMobile);
-
-    // Clean up
-    return () => window.removeEventListener("resize", checkIfMobile);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+
+  console.log("isMobile:", isMobile);
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">

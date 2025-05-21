@@ -193,7 +193,8 @@ export const mockProjects = [
   {
     id: 1,
     name: "Parkview Residences",
-    image: "https://images.unsplash.com/photo-1598928506311-c55ded91a20d",
+    image:
+      "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?auto=format&fit=crop&w=800&q=80",
     description:
       "Luxury residential apartments in Downtown with stunning park views. Features include premium finishes, rooftop garden, fitness center, and 24/7 security.",
     location: "Downtown, Metro City",
@@ -337,7 +338,8 @@ export const mockProjects = [
   {
     id: 2,
     name: "Riverside Apartments",
-    image: "https://images.unsplash.com/photo-1588854337119-f61ba4fa3a7b",
+    image:
+      "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?auto=format&fit=crop&w=800&q=80",
     description:
       "Modern apartments by the river with serene views and eco-friendly design. Perfect for nature lovers and urban professionals.",
     location: "Riverside District, Metro City",
@@ -414,7 +416,8 @@ export const mockProjects = [
   {
     id: 3,
     name: "Skyline Towers",
-    image: "https://images.unsplash.com/photo-1599422314077-f4dfdaa4cd8b",
+    image:
+      "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?auto=format&fit=crop&w=800&q=80",
     description:
       "Iconic high-rise apartments in the heart of the business district. Premium lifestyle with panoramic city views.",
     location: "Business Bay, Metro City",
@@ -479,7 +482,8 @@ export const mockProjects = [
   {
     id: 4,
     name: "The Green Villas",
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c",
+    image:
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
     description:
       "Premium gated villa community surrounded by greenery and tranquility. Ideal for families and peaceful living.",
     location: "Suburban Zone, Metro City",
@@ -536,7 +540,8 @@ export const mockProjects = [
   {
     id: 5,
     name: "Lakeview Heights",
-    image: "https://images.unsplash.com/photo-1600585154511-99dd6b7283a9",
+    image:
+      "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?auto=format&fit=crop&w=800&q=80",
     description:
       "Waterfront homes with scenic lake views and modern amenities. Designed for luxury and leisure.",
     location: "Lakefront, Metro City",
@@ -601,7 +606,8 @@ export const mockProjects = [
   {
     id: 6,
     name: "Metro Central Condos",
-    image: "https://images.unsplash.com/photo-1600585154154-faf8fa4b3fcd",
+    image:
+      "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?auto=format&fit=crop&w=800&q=80",
     description:
       "Affordable modern condos in the heart of Metro City. Close to metro, malls, and offices.",
     location: "Central Metro, Metro City",

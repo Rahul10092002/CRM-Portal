@@ -15,7 +15,7 @@ const LeadsByStatusChart = () => {
   const maxValue = Math.max(...statuses.map((status) => status.value))
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col border border-gray-200 rounded-lg p-4 bg-white shadow-sm">
       <BarChart2 size={24} className="text-gray-400 mb-4" />
       <div className="space-y-4">
         {statuses.map((status) => (
@@ -34,7 +34,7 @@ const LeadsByStatusChart = () => {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 export default LeadsByStatusChart

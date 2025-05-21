@@ -24,7 +24,6 @@ import {
   getLeadsBySource,
   getLeadsByStatus,
   getRecentLeads,
-  getRevenueData,
   getUpcomingFollowUps,
 } from "../../services/dashboardService";
 
@@ -34,7 +33,6 @@ const Dashboard = () => {
   const [stats, setStats] = useState(null);
   const [leadsBySource, setLeadsBySource] = useState([]);
   const [leadsByStatus, setLeadsByStatus] = useState([]);
-  const [revenueData, setRevenueData] = useState([]);
   const [recentLeads, setRecentLeads] = useState([]);
   const [followUps, setFollowUps] = useState([]);
 
@@ -44,14 +42,12 @@ const Dashboard = () => {
         statsRes,
         sourceRes,
         statusRes,
-        revenueRes,
         leadsRes,
         followUpRes,
       ] = await Promise.all([
         getDashboardStats(),
         getLeadsBySource(),
         getLeadsByStatus(),
-        getRevenueData(),
         getRecentLeads(),
         getUpcomingFollowUps(),
       ]);
@@ -59,14 +55,12 @@ const Dashboard = () => {
       setStats(statsRes.data);
       setLeadsBySource(sourceRes.data);
       setLeadsByStatus(statusRes.data);
-      setRevenueData(revenueRes.data);
       setRecentLeads(leadsRes.data);
       setFollowUps(followUpRes.data);
     };
 
     fetchData();
   }, []);
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
@@ -141,7 +135,7 @@ const Dashboard = () => {
       )}
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
             <CardTitle>Revenue Trend</CardTitle>
@@ -157,14 +151,11 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <Activity size={20} className="text-gray-400 mb-4" />
-            {/* Conversion Funnel Placeholder (static for now) */}
-            {/* You can later refactor this to use real data if needed */}
             <div className="h-64 space-y-4">
-              {/* Similar static funnel code as before */}
             </div>
           </CardContent>
         </Card>
-      </div>
+      </div> */}
 
       {/* Lead Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

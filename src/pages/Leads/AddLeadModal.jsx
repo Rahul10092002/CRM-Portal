@@ -28,8 +28,9 @@ const AddLeadModal = ({ isOpen, onClose, lead = null }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    createLead(formData).then((response) => {
-      console.log("Lead created:", response);
+    createLead(formData).then(() => {
+    }).catch((error) => {
+      console.error("Error creating lead:", error);
     });
     onClose();
   };

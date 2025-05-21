@@ -2,7 +2,7 @@ import { simulateLatency } from "./api";
 import { mockUsers } from "./mockData";
 
 // In-memory store for mock data
-let users = [...mockUsers];
+let users = mockUsers;
 let nextUserId = users.length + 1;
 
 // Helper function to find user by ID

@@ -9,8 +9,6 @@ const createResponse = (data) => ({
 });
 export const getDashboardStats = async () => {
   await simulateLatency();
-
-  // Calculate summary statistics
   const totalLeads = mockLeads.length;
   const newLeadsThisMonth = mockLeads.filter((lead) => {
     const createdDate = new Date(lead.createdAt);
@@ -23,7 +21,7 @@ export const getDashboardStats = async () => {
 
   const totalProjects = mockProjects.length;
   const activeProjects = mockProjects.filter(
-    (project) => project.status === "active"
+    (project) => project.status === "Active"
   ).length;
 
   const pendingSiteVisits = mockSiteVisits.filter(
@@ -31,8 +29,17 @@ export const getDashboardStats = async () => {
   ).length;
 
   const totalRevenue = mockProjects.reduce((sum, project) => {
-    return sum + (project.totalValue || 0);
+    const projectRevenue = project.units.reduce((unitSum, unit) => {
+      if (unit.status === "Sold" || unit.status === "Booked") {
+        const numericPrice = Number(unit.price.replace(/[^0-9.-]+/g, ""));
+        return unitSum + numericPrice;
+      }
+      return unitSum;
+    }, 0);
+    return sum + projectRevenue;
   }, 0);
+  
+  
 
   const stats = {
     totalLeads,

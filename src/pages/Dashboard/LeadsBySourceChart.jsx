@@ -13,22 +13,41 @@ const LeadsBySourceChart = () => {
   ]
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center border border-gray-200 rounded-lg p-4 bg-white shadow-sm">
       <PieChart size={24} className="text-gray-400 mb-4" />
       <div className="w-full flex justify-center">
         <div className="w-40 h-40 relative rounded-full overflow-hidden">
           {sources.map((source, index) => {
-            const rotation = index > 0 ? sources.slice(0, index).reduce((acc, curr) => acc + curr.value, 0) * 3.6 : 0
+            const rotation =
+              index > 0
+                ? sources
+                    .slice(0, index)
+                    .reduce((acc, curr) => acc + curr.value, 0) * 3.6
+                : 0;
 
             return (
               <div
                 key={source.name}
                 className={`absolute top-0 left-0 w-full h-full ${source.color}`}
                 style={{
-                  clipPath: `polygon(50% 50%, 50% 0%, ${50 + 50 * Math.cos(((rotation + source.value * 3.6) * Math.PI) / 180)}% ${50 - 50 * Math.sin(((rotation + source.value * 3.6) * Math.PI) / 180)}%, ${50 + 50 * Math.cos((rotation * Math.PI) / 180)}% ${50 - 50 * Math.sin((rotation * Math.PI) / 180)}%)`,
+                  clipPath: `polygon(50% 50%, 50% 0%, ${
+                    50 +
+                    50 *
+                      Math.cos(
+                        ((rotation + source.value * 3.6) * Math.PI) / 180
+                      )
+                  }% ${
+                    50 -
+                    50 *
+                      Math.sin(
+                        ((rotation + source.value * 3.6) * Math.PI) / 180
+                      )
+                  }%, ${50 + 50 * Math.cos((rotation * Math.PI) / 180)}% ${
+                    50 - 50 * Math.sin((rotation * Math.PI) / 180)
+                  }%)`,
                 }}
               />
-            )
+            );
           })}
         </div>
       </div>
@@ -43,7 +62,7 @@ const LeadsBySourceChart = () => {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 export default LeadsBySourceChart

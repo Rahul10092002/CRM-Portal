@@ -2,9 +2,9 @@ import { simulateLatency} from "./api";
 import { mockLeads, mockLeadActivities, mockUsers } from "./mockData";
 
 // In-memory store for mock data
-let leads = [...mockLeads];
-let users = [...mockUsers];
-let leadActivities = [...mockLeadActivities];
+let leads =mockLeads;
+let users =mockUsers;
+let leadActivities = mockLeadActivities;
 let nextLeadId = leads.length + 1;
 let nextActivityId = leadActivities.length + 1;
 

@@ -40,7 +40,7 @@ const EditLeadModal = ({ isOpen, onClose, lead }) => {
 
     try {
       await updateLead(lead.id, formData).then((response) => {
-        console.log("Lead updated:", response);
+        // console.log("Lead updated:", response);
       });
       onClose();
     } catch (error) {

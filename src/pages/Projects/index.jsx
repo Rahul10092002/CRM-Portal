@@ -29,7 +29,6 @@ const Projects = () => {
   useEffect(() => {
     // Fetch projects from API or perform any other side effects here
     getProjects().then((response) => {
-      console.log("Fetched projects:", response);
       setProjects(response.data);
     
     }
@@ -93,7 +92,6 @@ const Projects = () => {
 
   const refresh = () => {
     getProjects().then((response) => {
-      console.log("Fetched projects:", response);
       setProjects(response.data);
     }).catch((error) => {
       console.error("Error fetching projects:", error);

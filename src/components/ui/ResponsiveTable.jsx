@@ -9,7 +9,7 @@ const ResponsiveTable = ({
   return (
     <div className="w-full">
       {/* Desktop table view */}
-      <div className="hidden md:block overflow-x-auto">
+      <div className="hidden lg:block overflow-x-auto">
         <table className={`w-full table-auto ${className}`}>
           <thead className="bg-gray-50">
             <tr>
@@ -31,7 +31,7 @@ const ResponsiveTable = ({
       </div>
 
       {/* Mobile card view */}
-      <div className="md:hidden space-y-4">
+      <div className="lg:hidden space-y-4">
         {data.map((item, index) => renderMobileCard(item, index))}
       </div>
     </div>

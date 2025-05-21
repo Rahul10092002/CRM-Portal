@@ -330,7 +330,7 @@ const Users = () => {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
             <CardTitle>Users by Role</CardTitle>
@@ -426,7 +426,7 @@ const Users = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        {/* <Card>
           <CardHeader>
             <CardTitle>Lead Assignment</CardTitle>
           </CardHeader>
@@ -460,7 +460,7 @@ const Users = () => {
               </Button>
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
 
       {/* Add User Modal would go here */}

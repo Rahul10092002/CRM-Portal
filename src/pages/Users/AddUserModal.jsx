@@ -35,9 +35,7 @@ function AddUserModal({ isOpen, onClose, user, refresh }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isEditing) {
-      console.log("Updating user", formData);
       updateUser(user.id, formData).then((res) => {
-        console.log("User updated", res);
         if (res.success) {
           toast.success(res.message);
         } else {

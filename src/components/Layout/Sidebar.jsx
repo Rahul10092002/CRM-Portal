@@ -3,15 +3,11 @@ import {
   Home,
   Users,
   Building,
-  Calendar,
-  FileText,
-  Settings,
-  Link2,
-  MapPin,
   LogOut,
   ChevronLeft,
   ChevronRight,
   User,
+  X,
 } from "lucide-react";
 
 const Sidebar = ({ isOpen, toggleSidebar, isMobile }) => {
@@ -34,7 +30,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobile }) => {
       {/* Mobile overlay */}
       {isMobile && isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-20"
+          className="fixed inset-0 bg-transparent bg-opacity-30 z-20"
           onClick={toggleSidebar}
           aria-hidden="true"
         ></div>
@@ -59,7 +55,15 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobile }) => {
           ) : (
             <h1 className="text-xl font-bold text-gray-800 mx-auto">P</h1>
           )}
-          {!isMobile && (
+          {isMobile ? (
+            <button
+              onClick={toggleSidebar}
+              className="p-1 rounded-md hover:bg-gray-100 focus:outline-none"
+              aria-label="Close sidebar"
+            >
+              <X size={20} />
+            </button>
+          ) : (
             <button
               onClick={toggleSidebar}
               className="p-1 rounded-md hover:bg-gray-100 focus:outline-none"
@@ -76,6 +80,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobile }) => {
               <li key={item.path}>
                 <Link
                   to={item.path}
+                  onClick={isMobile ? toggleSidebar : undefined}
                   className={`flex items-center px-4 py-3 rounded-md transition-colors ${
                     location.pathname === item.path
                       ? "bg-blue-50 text-blue-600"
